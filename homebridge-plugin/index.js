@@ -1,50 +1,70 @@
-let Service, Characteristic
+"use strict";
 
-export default function (homebridge) {
-  Service = homebridge.hap.Service
-  Characteristic = homebridge.hap.Characteristic
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = _default;
 
-  homebridge.registerAccessory('homebridge-mqtt-door-lock', 'MQTT DoorLock', MQTTDoorLock)
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// TODO: For now this is a (real) fake door
-class MQTTDoorLock {
-  constructor (log, config) {
-    this.log = log
-    this.config = config
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-    this.currentState = Characteristic.LockCurrentState.UNSECURED
-    this.targetState = Characteristic.LockTargetState.UNSECURED
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-    this.lockService = new Service.LockMechanism(config.name)
+var Service, Characteristic;
 
-    this.lockService
-      .getCharacteristic(Characteristic.LockCurrentState)
-      .on('get', () => this.getLockCurrentState())
+function _default(homebridge) {
+  Service = homebridge.hap.Service;
+  Characteristic = homebridge.hap.Characteristic;
+  homebridge.registerAccessory('homebridge-mqtt-door-lock', 'MQTTDoorLock', MQTTDoorLock);
+} // TODO: For now this is a (real) fake door
 
-    this.lockService
-      .getCharacteristic(Characteristic.LockTargetState)
-      .on('get', () => this.getLockTargetState())
-      .on('set', () => this.setLockTargetState())
+
+var MQTTDoorLock = /*#__PURE__*/function () {
+  function MQTTDoorLock(log, config) {
+    var _this = this;
+
+    _classCallCheck(this, MQTTDoorLock);
+
+    this.log = log;
+    this.config = config;
+    this.currentState = Characteristic.LockCurrentState.UNSECURED;
+    this.targetState = Characteristic.LockTargetState.UNSECURED;
+    this.lockService = new Service.LockMechanism(config.name);
+    this.lockService.getCharacteristic(Characteristic.LockCurrentState).on('get', function () {
+      return _this.getLockCurrentState();
+    });
+    this.lockService.getCharacteristic(Characteristic.LockTargetState).on('get', function () {
+      return _this.getLockTargetState();
+    }).on('set', function () {
+      return _this.setLockTargetState();
+    });
   }
 
-  getLockCurrentState () {
-    return this.currentState
-  }
+  _createClass(MQTTDoorLock, [{
+    key: "getLockCurrentState",
+    value: function getLockCurrentState() {
+      return this.currentState;
+    }
+  }, {
+    key: "getLockTargetState",
+    value: function getLockTargetState() {
+      return this.targetState;
+    }
+  }, {
+    key: "setLockTargetState",
+    value: function setLockTargetState(state) {
+      var _this2 = this;
 
-  getLockTargetState () {
-    return this.targetState
-  }
+      this.log("Setting state to ".concat(state));
+      this.lockService.setCharacteristic(Characteristic.LockCurrentState, state);
+      this.targetState = state; // TODO: send request
 
-  setLockTargetState (state) {
-    this.log(`Setting state to ${state}`)
+      setTimeout(function () {
+        _this2.currentState = state;
+      }, 2000);
+    }
+  }]);
 
-    this.lockService.setCharacteristic(Characteristic.LockCurrentState, state)
-    this.targetState = state
-
-    // TODO: send request
-    setTimeout(() => {
-      this.currentState = state
-    }, 2000)
-  }
-}
+  return MQTTDoorLock;
+}();

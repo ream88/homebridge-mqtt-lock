@@ -1,7 +1,25 @@
 {
   "private": true,
+  "name": "homebridge-mqtt-door-lock",
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "scripts": {
+    "build": "babel src/index.js --out-file index.js",
+    "start": "babel src/index.js --watch --out-file index.js"
+  },
   "engines": {
     "node": ">=10.0.0",
     "homebridge": ">=0.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
   }
 }

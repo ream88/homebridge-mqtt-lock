@@ -1,0 +1,12 @@
+version: "3.6"
+
+services:
+  homebridge:
+    image: oznu/homebridge
+    environment:
+      - HOMEBRIDGE_CONFIG_UI=1
+      - HOMEBRIDGE_CONFIG_UI_PORT=8080
+    ports:
+      - 8080:8080
+    volumes:
+      - ./homebridge-plugin:/homebridge/node_modules/homebridge-plugin
