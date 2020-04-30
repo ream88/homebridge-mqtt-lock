@@ -25,7 +25,7 @@ class MQTTDoorLock {
     this.lockService
       .getCharacteristic(Characteristic.LockTargetState)
       .on('get', () => this.getLockTargetState())
-      .on('set', (state) => this.setLockTargetState(state))
+      .on('set', (state, callback) => this.setLockTargetState(state, callback))
   }
 
   getLockCurrentState () {
@@ -36,7 +36,7 @@ class MQTTDoorLock {
     return this.targetState
   }
 
-  setLockTargetState (state) {
+  setLockTargetState (state, callback) {
     this.log(`Setting state to ${state}`)
 
     this.lockService.setCharacteristic(Characteristic.LockCurrentState, state)
@@ -45,6 +45,7 @@ class MQTTDoorLock {
     // TODO: send request
     setTimeout(() => {
       this.currentState = state
+      callback()
     }, 2000)
   }
 

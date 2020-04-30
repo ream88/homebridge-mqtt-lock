@@ -36,8 +36,8 @@ var MQTTDoorLock = /*#__PURE__*/function () {
     });
     this.lockService.getCharacteristic(Characteristic.LockTargetState).on('get', function () {
       return _this.getLockTargetState();
-    }).on('set', function (state) {
-      return _this.setLockTargetState(state);
+    }).on('set', function (state, callback) {
+      return _this.setLockTargetState(state, callback);
     });
   }
 
@@ -53,7 +53,7 @@ var MQTTDoorLock = /*#__PURE__*/function () {
     }
   }, {
     key: "setLockTargetState",
-    value: function setLockTargetState(state) {
+    value: function setLockTargetState(state, callback) {
       var _this2 = this;
 
       this.log("Setting state to ".concat(state));
@@ -62,6 +62,7 @@ var MQTTDoorLock = /*#__PURE__*/function () {
 
       setTimeout(function () {
         _this2.currentState = state;
+        callback();
       }, 2000);
     }
   }, {
