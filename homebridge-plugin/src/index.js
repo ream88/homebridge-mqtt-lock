@@ -49,7 +49,7 @@ class MQTTDoorLock {
     }, 2000)
   }
 
-  getServices() {
+  getServices () {
     return [this.lockService]
   }
 }
