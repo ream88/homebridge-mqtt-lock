@@ -47,4 +47,8 @@ class MQTTDoorLock {
       this.currentState = state
     }, 2000)
   }
+
+  getServices() {
+    return [this.lockService]
+  }
 }

@@ -64,6 +64,11 @@ var MQTTDoorLock = /*#__PURE__*/function () {
         _this2.currentState = state;
       }, 2000);
     }
+  }, {
+    key: "getServices",
+    value: function getServices() {
+      return [this.lockService];
+    }
   }]);
 
   return MQTTDoorLock;
