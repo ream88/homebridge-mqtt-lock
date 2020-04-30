@@ -36,8 +36,8 @@ var MQTTDoorLock = /*#__PURE__*/function () {
     });
     this.lockService.getCharacteristic(Characteristic.LockTargetState).on('get', function () {
       return _this.getLockTargetState();
-    }).on('set', function () {
-      return _this.setLockTargetState();
+    }).on('set', function (state) {
+      return _this.setLockTargetState(state);
     });
   }
 

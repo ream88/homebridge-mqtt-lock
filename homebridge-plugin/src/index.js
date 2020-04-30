@@ -25,7 +25,7 @@ class MQTTDoorLock {
     this.lockService
       .getCharacteristic(Characteristic.LockTargetState)
       .on('get', () => this.getLockTargetState())
-      .on('set', () => this.setLockTargetState())
+      .on('set', (state) => this.setLockTargetState(state))
   }
 
   getLockCurrentState () {
