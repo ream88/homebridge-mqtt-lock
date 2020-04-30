@@ -13,8 +13,6 @@ class MQTTDoorLock {
     this.log = log
     this.config = config
 
-    this.log('Hello Adam Ben')
-
     this.currentState = Characteristic.LockCurrentState.UNSECURED
     this.targetState = Characteristic.LockTargetState.UNSECURED
 
