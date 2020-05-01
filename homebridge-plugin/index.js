@@ -56,13 +56,24 @@ var MQTTDoorLock = /*#__PURE__*/function () {
     value: function setLockTargetState(state, callback) {
       var _this2 = this;
 
-      this.log("Setting state to ".concat(state));
-      this.lockService.setCharacteristic(Characteristic.LockCurrentState, state);
-      this.targetState = state; // TODO: send request
+      this.log("Setting state to ".concat(state, "\u2026"));
+      this.targetState = state;
+      this.lockService.getCharacteristic(Characteristic.LockTargetState).updateValue(state); // TODO: send request
 
       setTimeout(function () {
         _this2.currentState = state;
-        callback();
+
+        _this2.lockService.getCharacteristic(Characteristic.LockCurrentState).updateValue(state);
+
+        _this2.log("State set to ".concat(state, "!"));
+
+        callback(); // Auto lock after x milliseconds
+
+        if (_this2.config.autoLock && state === Characteristic.LockCurrentState.UNSECURED) {
+          setTimeout(function () {
+            _this2.lockService.setCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED);
+          }, _this2.config.autoLockDelay || 60000);
+        }
       }, 2000);
     }
   }, {

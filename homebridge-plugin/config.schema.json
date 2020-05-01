@@ -1,0 +1,27 @@
+{
+  "pluginAlias": "MQTTDoorLock",
+  "pluginType": "accessory",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "required": true
+      },
+      "autoLock": {
+        "title": "Enable Auto Locking",
+        "type": "boolean"
+      },
+      "autoLockDelay": {
+        "title": "Auto Lock Delay",
+        "type": "integer",
+        "default": 60000,
+        "description": "In milliseconds (e.g. 60000 equals to 1 minute)."
+      }
+    }
+  },
+  "form": null,
+  "display": null
+}
