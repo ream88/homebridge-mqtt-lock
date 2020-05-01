@@ -1,13 +1,17 @@
 {
-  "private": true,
   "name": "homebridge-mqtt-door-lock",
+  "version": "0.0.1",
+  "author": {
+    "name": "Mario Uher",
+    "email": "uher.mario@gmail.com"
+  },
   "keywords": [
     "homebridge-plugin"
   ],
   "scripts": {
-    "build": "babel src/index.js --out-file index.js",
-    "lint": "standard --fix src/index.js",
-    "start": "babel src/index.js --watch --out-file index.js"
+    "build": "webpack -p",
+    "lint": "standard --fix src/index.js webpack.config.js",
+    "start": "webpack --watch"
   },
   "engines": {
     "node": ">=10.0.0",
@@ -17,11 +21,9 @@
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
-    "standard": "^14.3.3"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ]
+    "babel-loader": "^8.1.0",
+    "standard": "^14.3.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   }
 }
