@@ -15,8 +15,8 @@ class MQTTDoorLock {
     this.log = log
     this.config = config
 
-    this.currentState = Characteristic.LockCurrentState.UNSECURED
-    this.targetState = Characteristic.LockTargetState.UNSECURED
+    this.currentState = Characteristic.LockCurrentState.UNKNOWN
+    this.targetState = Characteristic.LockTargetState.UNKNOWN
 
     this.informationService = new Service.AccessoryInformation()
     this.informationService
