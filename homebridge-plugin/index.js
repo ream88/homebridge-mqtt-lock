@@ -32,26 +32,16 @@ var MQTTDoorLock = /*#__PURE__*/function () {
     this.targetState = Characteristic.LockTargetState.UNSECURED;
     this.lockService = new Service.LockMechanism(config.name);
     this.lockService.getCharacteristic(Characteristic.LockCurrentState).on('get', function (callback) {
-      return _this.getLockCurrentState(callback);
+      return callback(undefined, _this.currentState);
     });
     this.lockService.getCharacteristic(Characteristic.LockTargetState).on('get', function (callback) {
-      return _this.getLockTargetState(callback);
+      return callback(undefined, _this.targetState);
     }).on('set', function (state, callback) {
       return _this.setLockTargetState(state, callback);
     });
   }
 
   _createClass(MQTTDoorLock, [{
-    key: "getLockCurrentState",
-    value: function getLockCurrentState(callback) {
-      callback(undefined, this.currentState);
-    }
-  }, {
-    key: "getLockTargetState",
-    value: function getLockTargetState(callback) {
-      callback(undefined, this.targetState);
-    }
-  }, {
     key: "setLockTargetState",
     value: function setLockTargetState(state, callback) {
       var _this2 = this;

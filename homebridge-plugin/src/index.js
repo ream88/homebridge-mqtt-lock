@@ -20,20 +20,12 @@ class MQTTDoorLock {
 
     this.lockService
       .getCharacteristic(Characteristic.LockCurrentState)
-      .on('get', (callback) => this.getLockCurrentState(callback))
+      .on('get', (callback) => callback(undefined, this.currentState))
 
     this.lockService
       .getCharacteristic(Characteristic.LockTargetState)
-      .on('get', (callback) => this.getLockTargetState(callback))
+      .on('get', (callback) => callback(undefined, this.targetState))
       .on('set', (state, callback) => this.setLockTargetState(state, callback))
-  }
-
-  getLockCurrentState (callback) {
-    callback(undefined, this.currentState)
-  }
-
-  getLockTargetState (callback) {
-    callback(undefined, this.targetState)
   }
 
   setLockTargetState (state, callback) {
