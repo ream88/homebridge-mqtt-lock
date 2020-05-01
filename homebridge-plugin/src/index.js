@@ -1,22 +1,50 @@
-import packageJson from '../package.json'
+const { connect } = require('mqtt')
+const packageJson = require('../package.json')
 
 let Service, Characteristic
 
-export default function (homebridge) {
+module.exports = (homebridge) => {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
 
   homebridge.registerAccessory('homebridge-mqtt-door-lock', 'MQTTDoorLock', MQTTDoorLock)
 }
 
-// TODO: For now this is a (real) fake door
 class MQTTDoorLock {
   constructor (log, config) {
     this.log = log
     this.config = config
+    this.mqttClient = connect(`mqtt://${this.config.mqttBroker}`)
 
-    this.currentState = Characteristic.LockCurrentState.UNKNOWN
+    this.mqttClient.on('connect', () => {
+      this.mqttClient.subscribe(this.config.getTopic, (error) => {
+        if (error) {
+          this.log.error(error)
+        }
+      })
+    })
+
+    this.mqttClient.on('message', (_topic, message) => {
+      message = message.toString()
+
+      switch (message) {
+        case '0':
+          this.lockService.getCharacteristic(Characteristic.LockTargetState).updateValue(Characteristic.LockTargetState.UNSECURED)
+          this.lockService.getCharacteristic(Characteristic.LockCurrentState).updateValue(Characteristic.LockCurrentState.UNSECURED)
+          break
+
+        case '1':
+          this.lockService.getCharacteristic(Characteristic.LockTargetState).updateValue(Characteristic.LockTargetState.SECURED)
+          this.lockService.getCharacteristic(Characteristic.LockCurrentState).updateValue(Characteristic.LockCurrentState.SECURED)
+          break
+
+        default:
+          this.log.warn(`Got unknown message: ${message}`)
+      }
+    })
+
     this.targetState = Characteristic.LockTargetState.UNKNOWN
+    this.currentState = Characteristic.LockCurrentState.UNKNOWN
 
     this.informationService = new Service.AccessoryInformation()
     this.informationService
@@ -26,12 +54,12 @@ class MQTTDoorLock {
 
     this.lockService = new Service.LockMechanism(config.name)
     this.lockService
-      .getCharacteristic(Characteristic.LockCurrentState)
-      .on('get', (callback) => callback(undefined, this.currentState))
-    this.lockService
       .getCharacteristic(Characteristic.LockTargetState)
       .on('get', (callback) => callback(undefined, this.targetState))
       .on('set', (state, callback) => this.setLockTargetState(state, callback))
+    this.lockService
+      .getCharacteristic(Characteristic.LockCurrentState)
+      .on('get', (callback) => callback(undefined, this.currentState))
   }
 
   setLockTargetState (state, callback) {
@@ -39,21 +67,24 @@ class MQTTDoorLock {
     this.targetState = state
     this.lockService.getCharacteristic(Characteristic.LockTargetState).updateValue(state)
 
-    // TODO: send request
-    setTimeout(() => {
-      this.currentState = state
-      this.lockService.getCharacteristic(Characteristic.LockCurrentState).updateValue(state)
-      this.log(`State set to ${state}!`)
+    this.mqttClient.publish(this.config.setTopic, state.toString(), { qos: 2 }, (error) => {
+      if (error) {
+        callback(error)
+      } else {
+        this.currentState = state
+        this.lockService.getCharacteristic(Characteristic.LockCurrentState).updateValue(state)
+        this.log(`State set to ${state}!`)
 
-      callback()
+        callback()
 
-      // Auto lock after x milliseconds
-      if (this.config.autoLock && state === Characteristic.LockCurrentState.UNSECURED) {
-        setTimeout(() => {
-          this.lockService.setCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED)
-        }, this.config.autoLockDelay || 60000)
+        // Auto lock after x milliseconds
+        if (this.config.autoLock && state === Characteristic.LockCurrentState.UNSECURED) {
+          setTimeout(() => {
+            this.lockService.setCharacteristic(Characteristic.LockTargetState, Characteristic.LockTargetState.SECURED)
+          }, this.config.autoLockDelay || 60000)
+        }
       }
-    }, 2000)
+    })
   }
 
   getServices () {

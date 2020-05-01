@@ -19,9 +19,25 @@
         "type": "integer",
         "default": 60000,
         "description": "In milliseconds (e.g. 60000 equals to 1 minute)."
+      },
+      "mqttBroker": {
+        "title": "MQTT Broker",
+        "type": "string",
+        "required": true,
+        "description": "127.0.0.1 or test.mosquitto.org"
+      },
+      "getTopic": {
+        "title": "MQTT Get Topic",
+        "type": "string",
+        "required": true,
+        "description": "The MQTT topic this plugin will subscribe to get the status of the lock."
+      },
+      "setTopic": {
+        "title": "MQTT Set Topic",
+        "type": "string",
+        "required": true,
+        "description": "The MQTT topic for locking and unlocking the lock."
       }
     }
-  },
-  "form": null,
-  "display": null
+  }
 }
