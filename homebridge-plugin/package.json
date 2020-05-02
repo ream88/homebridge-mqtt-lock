@@ -10,7 +10,7 @@
     "homebridge-plugin"
   ],
   "scripts": {
-    "lint": "standard --fix src/index.js webpack.config.js"
+    "lint": "standard --fix src/index.js"
   },
   "engines": {
     "node": ">=10.0.0",
