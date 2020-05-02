@@ -13,8 +13,8 @@
     "lint": "standard --fix src/index.js"
   },
   "engines": {
-    "node": ">=10.0.0",
-    "homebridge": ">=0.2.0"
+    "node": ">=10.17.0",
+    "homebridge": ">=1.0.0"
   },
   "devDependencies": {
     "standard": "^14.3.3"
