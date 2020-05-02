@@ -7,10 +7,10 @@ module.exports = (homebridge) => {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
 
-  homebridge.registerAccessory('homebridge-mqtt-door-lock', 'MQTTDoorLock', MQTTDoorLock)
+  homebridge.registerAccessory('MQTTLock', MQTTLock)
 }
 
-class MQTTDoorLock {
+class MQTTLock {
   constructor (log, config) {
     this.log = log
     this.config = config

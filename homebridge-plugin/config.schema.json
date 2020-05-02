@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "MQTTDoorLock",
+  "pluginAlias": "MQTTLock",
   "pluginType": "accessory",
   "singular": true,
   "schema": {

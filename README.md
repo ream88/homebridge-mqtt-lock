@@ -1,20 +1,20 @@
-# homebridge-mqtt-door-lock
+# homebridge-mqtt-lock
 
 ## Usage
 
 ```json
 {
-  "bridge": {
-      "name": "Homebridge",
-      "username": "0E:49:59:E7:CB:45",
-      "port": 51415,
-      "pin": "111-11-111"
-  },
-  "accessories": [{
-    "accessory": "MQTTDoorLock",
-    "name": "Front Door"
-  }],
-  "platforms": []
+  "accessories": [
+    {
+      "accessory": "MQTTLock",
+      "name": "RealFakeDoor",
+      "autoLock": true,
+      "autoLockDelay": 10000,
+      "mqttBroker": "127.0.0.1",
+      "getTopic": "RealFakeDoor/Get",
+      "setTopic": "RealFakeDoor/Set"
+    }
+  ]
 }
 ```
 

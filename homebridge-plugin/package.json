@@ -1,5 +1,5 @@
 {
-  "name": "homebridge-mqtt-door-lock",
+  "name": "homebridge-mqtt-lock",
   "version": "0.0.1",
   "author": {
     "name": "Mario Uher",
