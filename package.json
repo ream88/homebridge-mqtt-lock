@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mqtt-lock",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An auto-locking homebridge lock using MQTT.",
   "author": {
     "name": "Mario Uher",
