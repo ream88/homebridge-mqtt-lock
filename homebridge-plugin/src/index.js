@@ -14,6 +14,27 @@ class MQTTDoorLock {
   constructor (log, config) {
     this.log = log
     this.config = config
+
+    this.informationService = new Service.AccessoryInformation()
+    this.informationService
+      .setCharacteristic(Characteristic.Manufacturer, packageJson.author.name)
+      .setCharacteristic(Characteristic.Model, packageJson.name)
+      .setCharacteristic(Characteristic.FirmwareRevision, packageJson.version)
+
+    this.targetState = Characteristic.LockTargetState.UNKNOWN
+    this.currentState = Characteristic.LockCurrentState.UNKNOWN
+
+    this.lockService = new Service.LockMechanism(config.name)
+
+    this.lockService
+      .getCharacteristic(Characteristic.LockTargetState)
+      .on('get', (callback) => callback(undefined, this.targetState))
+      .on('set', (state, callback) => this.setLockTargetState(state, callback))
+
+    this.lockService
+      .getCharacteristic(Characteristic.LockCurrentState)
+      .on('get', (callback) => callback(undefined, this.currentState))
+
     this.mqttClient = connect(`mqtt://${this.config.mqttBroker}`)
 
     this.mqttClient.on('connect', () => {
@@ -42,29 +63,12 @@ class MQTTDoorLock {
           this.log.warn(`Got unknown message: ${message}`)
       }
     })
-
-    this.targetState = Characteristic.LockTargetState.UNKNOWN
-    this.currentState = Characteristic.LockCurrentState.UNKNOWN
-
-    this.informationService = new Service.AccessoryInformation()
-    this.informationService
-      .setCharacteristic(Characteristic.Manufacturer, packageJson.author.name)
-      .setCharacteristic(Characteristic.Model, packageJson.name)
-      .setCharacteristic(Characteristic.FirmwareRevision, packageJson.version)
-
-    this.lockService = new Service.LockMechanism(config.name)
-    this.lockService
-      .getCharacteristic(Characteristic.LockTargetState)
-      .on('get', (callback) => callback(undefined, this.targetState))
-      .on('set', (state, callback) => this.setLockTargetState(state, callback))
-    this.lockService
-      .getCharacteristic(Characteristic.LockCurrentState)
-      .on('get', (callback) => callback(undefined, this.currentState))
   }
 
   setLockTargetState (state, callback) {
-    this.log(`Setting state to ${state}…`)
     this.targetState = state
+    this.logTargetState()
+
     this.lockService.getCharacteristic(Characteristic.LockTargetState).updateValue(state)
 
     this.mqttClient.publish(this.config.setTopic, state.toString(), { qos: 2 }, (error) => {
@@ -72,9 +76,9 @@ class MQTTDoorLock {
         callback(error)
       } else {
         this.currentState = state
-        this.lockService.getCharacteristic(Characteristic.LockCurrentState).updateValue(state)
-        this.log(`State set to ${state}!`)
+        this.logCurrentState()
 
+        this.lockService.getCharacteristic(Characteristic.LockCurrentState).updateValue(state)
         callback()
 
         // Auto lock after x milliseconds
@@ -89,5 +93,35 @@ class MQTTDoorLock {
 
   getServices () {
     return [this.informationService, this.lockService]
+  }
+
+  logTargetState () {
+    switch (this.targetState) {
+      case Characteristic.LockTargetState.SECURED:
+        this.log('Locking...')
+        break
+
+      case Characteristic.LockTargetState.UNSECURED:
+        this.log('Unlocking...')
+        break
+
+      default:
+        break
+    }
+  }
+
+  logCurrentState () {
+    switch (this.currentState) {
+      case Characteristic.LockCurrentState.SECURED:
+        this.log('Locked!')
+        break
+
+      case Characteristic.LockCurrentState.UNSECURED:
+        this.log('Unlocked!')
+        break
+
+      default:
+        break
+    }
   }
 }
