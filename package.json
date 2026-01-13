@@ -22,7 +22,7 @@
     "homebridge": ">=1.0.0"
   },
   "devDependencies": {
-    "standard": "^14.3.3"
+    "standard": "^17.1.2"
   },
   "dependencies": {
     "mqtt": "^4.0.0"
